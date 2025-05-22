@@ -1,8 +1,8 @@
 #!/bin/bash
 # Two-Tower Recommender Development Environment Activation
-# Streamlined approach leveraging proven working components
+# Enhanced virtual environment with PATH precedence management
 
-set -e  # Exit on any error
+set -e  # Exit on error
 
 # Validate project directory context
 if [[ ! -f ".python-version" ]] || [[ ! -d "venv" ]]; then
@@ -32,7 +32,7 @@ if [[ -z "$VIRTUAL_ENV" ]]; then
     return 1
 fi
 
-# Apply PATH precedence correction (proven working method)
+# Apply PATH precedence correction
 echo "🔧 Configuring tool PATH precedence..."
 export PATH="$PROJECT_ROOT/venv/bin:$PATH"
 
@@ -68,4 +68,3 @@ done
 echo ""
 echo "🚀 Ready for Two-Tower Recommender development!"
 echo "   Use 'deactivate' to exit environment"
-echo "   Use 'python validate_environment.py' for comprehensive validation"
