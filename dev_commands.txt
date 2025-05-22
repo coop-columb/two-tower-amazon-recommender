@@ -1,0 +1,29 @@
+SAFE DEVELOPMENT COMMANDS:
+
+FORMATTING:
+black src/ tests/
+black --check src/ tests/
+
+IMPORT SORTING:  
+isort src/ tests/
+isort --check-only src/ tests/
+
+LINTING:
+flake8 src/ tests/
+
+TYPE CHECKING:
+mypy src/
+
+TESTING:
+pytest tests/ -v
+pytest tests/ --cov=src
+
+GIT WORKFLOW:
+git status
+git add .
+git commit -m "message"
+git push origin branch-name
+
+ENVIRONMENT:
+source activate_dev.sh  # Start session
+deactivate               # End session
