@@ -7,9 +7,11 @@ Production-ready two-tower recommendation model implementation using Amazon Revi
 This project implements a state-of-the-art two-tower architecture for product recommendation using the Amazon Reviews 2023 dataset. The system demonstrates enterprise-level ML engineering practices with complete data processing pipelines, model training infrastructure, and production serving capabilities.
 
 ## 🏗️ Architecture
+
 Raw Data → Processing Pipeline → Two-Tower Model → Serving Infrastructure
 
 ### Core Components
+
 - **Data Pipeline**: HuggingFace integration with advanced preprocessing
 - **Model Architecture**: TensorFlow Recommenders two-tower implementation  
 - **Training Infrastructure**: Distributed training with experiment tracking
