@@ -41,6 +41,7 @@ dependencies = [
     "plotly>=5.17.0",
     "tqdm>=4.66.0",
     "python-dotenv>=1.0.0",
+    "wordcloud>=1.9.0",
 ]
 
 [project.optional-dependencies]
@@ -55,6 +56,10 @@ dev = [
     "pre-commit>=3.5.0",
     "jupyter>=1.0.0",
     "ipykernel>=6.25.0",
+    "types-PyYAML>=1.0.0",
+    "pandas-stubs>=2.0.0",
+    "types-tqdm>=4.0.0",
+    "types-seaborn>=0.12.0",
 ]
 
 [project.scripts]
@@ -137,3 +142,6 @@ exclude_lines = [
     "class .*\\bProtocol\\):",
     "@(abc\\.)?abstractmethod",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
