@@ -78,3 +78,4 @@ temp/
 .coverage
 coverage.xml
 htmlcov/
+.flake8
