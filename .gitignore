@@ -73,3 +73,8 @@ local_config.yaml
 .tmp/
 temp/
 *.tmp
+
+# Coverage files
+.coverage
+coverage.xml
+htmlcov/
