@@ -125,11 +125,12 @@ jobs:
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+      continue-on-error: true
       with:
         file: ./coverage.xml
         flags: unittests
         name: codecov-umbrella
-        fail_ci_if_error: true
+        fail_ci_if_error: false
 
   build-validation:
     name: Build Validation
