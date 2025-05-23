@@ -13,7 +13,7 @@ Raw Data → Processing Pipeline → Two-Tower Model → Serving Infrastructure
 ### Core Components
 
 - **Data Pipeline**: HuggingFace integration with advanced preprocessing
-- **Model Architecture**: TensorFlow Recommenders two-tower implementation  
+- **Model Architecture**: TensorFlow Recommenders two-tower implementation
 - **Training Infrastructure**: Distributed training with experiment tracking
 - **Serving System**: FastAPI with approximate nearest neighbor search
 - **MLOps**: Comprehensive CI/CD with automated testing and deployment

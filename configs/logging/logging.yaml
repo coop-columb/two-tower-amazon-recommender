@@ -5,11 +5,11 @@ formatters:
   standard:
     format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     datefmt: "%Y-%m-%d %H:%M:%S"
-  
+
   detailed:
     format: "%(asctime)s - %(name)s - %(levelname)s - %(module)s - %(funcName)s - %(lineno)d - %(message)s"
     datefmt: "%Y-%m-%d %H:%M:%S"
-  
+
   json:
     format: "%(asctime)s %(name)s %(levelname)s %(message)s"
     class: "pythonjsonlogger.jsonlogger.JsonFormatter"
@@ -20,7 +20,7 @@ handlers:
     level: INFO
     formatter: standard
     stream: ext://sys.stdout
-  
+
   file:
     class: logging.handlers.RotatingFileHandler
     level: DEBUG
@@ -28,7 +28,7 @@ handlers:
     filename: logs/application.log
     maxBytes: 10485760  # 10MB
     backupCount: 5
-  
+
   error_file:
     class: logging.handlers.RotatingFileHandler
     level: ERROR
@@ -42,12 +42,12 @@ loggers:
     level: DEBUG
     handlers: [console, file, error_file]
     propagate: no
-  
+
   tensorflow:
     level: WARNING
     handlers: [console]
     propagate: no
-  
+
   transformers:
     level: WARNING
     handlers: [console]

@@ -8,8 +8,8 @@ Two-Tower Amazon Recommender Documentation
 Overview
 --------
 
-This project implements a production-ready two-tower neural network recommendation system 
-using the Amazon Reviews 2023 dataset. The system is designed for large-scale product 
+This project implements a production-ready two-tower neural network recommendation system
+using the Amazon Reviews 2023 dataset. The system is designed for large-scale product
 recommendation with efficient retrieval capabilities.
 
 Project Status

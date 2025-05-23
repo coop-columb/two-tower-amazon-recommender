@@ -20,7 +20,7 @@ classifiers = [
 dependencies = [
     "tensorflow-macos>=2.15.0; sys_platform == 'darwin'",
     "tensorflow>=2.15.0; sys_platform != 'darwin'",
-    "tensorflow-metal>=1.1.0; sys_platform == 'darwin'", 
+    "tensorflow-metal>=1.1.0; sys_platform == 'darwin'",
     "tensorflow-recommenders>=0.7.3",
     "datasets>=2.14.0",
     "huggingface-hub>=0.17.0",

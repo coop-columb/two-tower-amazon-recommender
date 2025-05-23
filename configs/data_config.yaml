@@ -36,14 +36,14 @@ preprocessing:
     - "text"
     - "features"
     - "description"
-  
+
   min_interactions_per_user: 5
   min_interactions_per_item: 5
   max_sequence_length: 512
   train_split: 0.8
   val_split: 0.1
   test_split: 0.1
-  
+
   filtering:
     min_rating: 1.0
     max_rating: 5.0
@@ -57,14 +57,14 @@ model:
   item_tower_dims: [512, 256, 128]
   dropout_rate: 0.1
   l2_regularization: 1e-6
-  
+
   training:
     batch_size: 1024
     learning_rate: 0.001
     epochs: 50
     patience: 5
     validation_freq: 1
-    
+
   retrieval:
     candidate_sampling: "in_batch"
     temperature: 0.1
