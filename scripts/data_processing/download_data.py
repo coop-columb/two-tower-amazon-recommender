@@ -43,7 +43,7 @@ def download_category_data(
 ) -> None:
     """
     Download data for a specific category.
-    
+
     Args:
         category: Product category to download
         output_dir: Directory to save processed data
@@ -51,7 +51,7 @@ def download_category_data(
     """
     logger = logging.getLogger(__name__)
     logger.info(f"Downloading {category} data...")
-    
+
     try:
         # Download reviews
         reviews_dataset = load_dataset(
@@ -59,43 +59,45 @@ def download_category_data(
             f"raw_review_{category}",
             trust_remote_code=True
         )
-        
+
         # Download metadata
         meta_dataset = load_dataset(
             "McAuley-Lab/Amazon-Reviews-2023", 
             f"raw_meta_{category}",
             trust_remote_code=True
         )
-        
+
         # Convert to pandas for easier manipulation
         reviews_df = reviews_dataset["full"].to_pandas()
         meta_df = meta_dataset["full"].to_pandas()
-        
+
         # Sample data if specified
         if sample_size and len(reviews_df) > sample_size:
             reviews_df = reviews_df.sample(n=sample_size, random_state=42)
             logger.info(f"Sampled {sample_size} reviews for {category}")
-        
+
         # Save to parquet for efficient storage
         reviews_output = output_dir / f"{category}_reviews.parquet"
         meta_output = output_dir / f"{category}_meta.parquet"
-        
+
         reviews_df.to_parquet(reviews_output, compression="snappy")
         meta_df.to_parquet(meta_output, compression="snappy")
-        
+
         logger.info(f"Saved {len(reviews_df)} reviews and {len(meta_df)} items for {category}")
-        
+
     except Exception as e:
         logger.error(f"Failed to download {category}: {str(e)}")
         raise
 
 
-def main():
+def main() -> None:
     """Main execution function."""
-    parser = argparse.ArgumentParser(description="Download Amazon Reviews 2023 dataset")
+    parser = argparse.ArgumentParser(
+        description="Download Amazon Reviews 2023 dataset"
+    )
     parser.add_argument(
-        "--config", 
-        type=Path, 
+        "--config",
+        type=Path,
         default="configs/data_config.yaml",
         help="Path to configuration file"
     )
@@ -121,28 +123,28 @@ def main():
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
         help="Logging level"
     )
-    
+
     args = parser.parse_args()
-    
+
     # Setup
     setup_logging(args.log_level)
     logger = logging.getLogger(__name__)
-    
+
     # Create output directory
     args.output_dir.mkdir(parents=True, exist_ok=True)
     Path("logs").mkdir(exist_ok=True)
-    
+
     # Load configuration
     config = load_config(args.config)
-    
+
     # Determine categories to download
     if args.categories:
         categories = args.categories
     else:
         categories = config["dataset"]["categories"]
-    
+
     logger.info(f"Starting download for {len(categories)} categories...")
-    
+
     # Download each category
     for category in tqdm(categories, desc="Downloading categories"):
         try:
@@ -154,7 +156,7 @@ def main():
         except Exception as e:
             logger.error(f"Failed to process {category}: {str(e)}")
             continue
-    
+
     logger.info("Download process completed!")
 
 
