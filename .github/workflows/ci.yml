@@ -19,12 +19,12 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Set up Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
     - name: Cache Python dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ env.CACHE_VERSION }}-${{ hashFiles('**/pyproject.toml') }}
@@ -54,7 +54,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
@@ -74,7 +74,7 @@ jobs:
         safety check # Also show results in stdout
         
     - name: Upload security reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: security-reports
@@ -97,12 +97,12 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         
     - name: Cache dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-py${{ matrix.python-version }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/pyproject.toml') }}
@@ -123,7 +123,7 @@ jobs:
         pytest tests/integration/ -v
         
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
       with:
         file: ./coverage.xml
@@ -140,7 +140,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
@@ -155,7 +155,7 @@ jobs:
         python -c "import src; print('Package installation successful')"
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist-packages
         path: dist/
@@ -168,7 +168,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
@@ -184,7 +184,7 @@ jobs:
         make html
         
     - name: Upload documentation
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: documentation
         path: docs/_build/html/
@@ -194,7 +194,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [security-scan, test, build-validation]
     if: github.ref == 'refs/heads/develop'
-    environment: staging
+    # environment:
+    #   name: staging
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -209,7 +210,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [security-scan, test, build-validation]
     if: github.ref == 'refs/heads/main'
-    environment: production
+    # environment:
+    #   name: production
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
