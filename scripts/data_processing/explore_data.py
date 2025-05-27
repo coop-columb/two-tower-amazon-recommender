@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""
-Exploratory data analysis for Amazon Reviews 2023 dataset.
-"""
+"""Exploratory data analysis for Amazon Reviews 2023 dataset."""
 
 import argparse
 import logging
 from pathlib import Path
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.express as px
@@ -77,7 +76,7 @@ def create_visualizations(analysis_results: list[dict], output_dir: Path) -> Non
 
 
 def main() -> None:
-    """Main execution function."""
+    """Execute the main data exploration function."""
     parser = argparse.ArgumentParser(description="Explore Amazon Reviews dataset")
     parser.add_argument(
         "--data-dir", type=Path, default="data/raw", help="Directory containing downloaded data"

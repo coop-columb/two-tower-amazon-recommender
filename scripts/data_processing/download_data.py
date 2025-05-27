@@ -10,6 +10,8 @@ import argparse
 import logging
 import sys
 from pathlib import Path
+from typing import Any
+
 import yaml
 from datasets import load_dataset
 from tqdm import tqdm
@@ -27,10 +29,14 @@ def setup_logging(log_level: str = "INFO") -> None:
     )
 
 
-def load_config(config_path: Path) -> dict:
+def load_config(config_path: Path) -> dict[str, Any]:
     """Load configuration from YAML file."""
     with open(config_path) as f:
-        return yaml.safe_load(f)
+        config = yaml.safe_load(f)
+        if config is None:
+            return {}
+        result: dict[str, Any] = config
+        return result
 
 
 def download_category_data(
@@ -82,7 +88,7 @@ def download_category_data(
 
 
 def main() -> None:
-    """Main execution function."""
+    """Execute the main download function."""
     parser = argparse.ArgumentParser(description="Download Amazon Reviews 2023 dataset")
     parser.add_argument(
         "--config",
