@@ -9,7 +9,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import pandas as pd
 
@@ -36,6 +36,7 @@ class DataProcessor(ABC):
     """Abstract base class for all data processing components."""
 
     def __init__(self, config: DatasetConfig, logger: logging.Logger | None = None):
+        """Initialize the data processor."""
         self.config = config
         self.logger = logger or logging.getLogger(self.__class__.__name__)
 

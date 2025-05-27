@@ -75,7 +75,9 @@ class TextProcessor:
                 self.stemmer = PorterStemmer()
         except Exception as e:
             # Log the error but continue without failing
-            logging.warning(f"NLTK setup error: {str(e)}. Some text processing features may be unavailable.")
+            logging.warning(
+                f"NLTK setup error: {str(e)}. Some text processing features may be unavailable."
+            )
 
     def clean_text(self, text: str | None | Any) -> str:
         """
@@ -350,9 +352,7 @@ class AmazonReviewsPreprocessor(DataProcessor):
         self.user_encoder = LabelEncoder()
         self.item_encoder = LabelEncoder()
 
-    def process(
-        self, data: pd.DataFrame, meta_data: pd.DataFrame | None = None
-    ) -> pd.DataFrame:
+    def process(self, data: pd.DataFrame, meta_data: pd.DataFrame | None = None) -> pd.DataFrame:
         """
         Process Amazon Reviews data through complete pipeline.
 
@@ -431,9 +431,7 @@ class AmazonReviewsPreprocessor(DataProcessor):
 
         return df
 
-    def _engineer_features(
-        self, df: pd.DataFrame, meta_data: pd.DataFrame | None
-    ) -> pd.DataFrame:
+    def _engineer_features(self, df: pd.DataFrame, meta_data: pd.DataFrame | None) -> pd.DataFrame:
         """Apply feature engineering pipeline."""
         # Create temporal features
         df = self.feature_engineer.create_temporal_features(df)

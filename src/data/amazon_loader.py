@@ -8,7 +8,7 @@ from HuggingFace Hub with robust error handling and data validation.
 import logging
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union, cast
+from typing import TypedDict, cast
 
 import pandas as pd
 from datasets import load_dataset
@@ -17,8 +17,8 @@ from huggingface_hub import HfApi
 from .base import DataLoader, DatasetConfig, DataValidator
 
 
-# TypedDict for Amazon dataset statistics
 class CategoryStats(TypedDict, total=False):
+    """Type definition for category statistics."""
     total_records: int
     unique_users: int
     unique_items: int
@@ -107,6 +107,7 @@ class AmazonReviewsLoader(DataLoader):
         trust_remote_code: bool = False,
         logger: logging.Logger | None = None,
     ):
+        """Initialize the Amazon Reviews loader."""
         self.config = config
         self.cache_dir = cache_dir or Path("data/cache")
         self.trust_remote_code = trust_remote_code

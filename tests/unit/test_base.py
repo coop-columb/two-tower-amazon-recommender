@@ -1,18 +1,13 @@
 """Unit tests for base data pipeline components."""
 
-import pandas as pd
-import pytest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock
-from datetime import datetime
 
-from src.data.base import (
-    DatasetConfig,
-    DataLoader,
-    DataProcessor,
-    DataValidator,
-    DataSaver,
-)
+import pandas as pd
+import pytest
+
+from src.data.base import DataLoader, DataProcessor, DataSaver, DatasetConfig, DataValidator
 
 
 class TestDatasetConfig:
@@ -27,11 +22,11 @@ class TestDatasetConfig:
             preprocessing={
                 "min_interactions_per_user": 5,
                 "min_interactions_per_item": 5,
-                "param1": "value1"
+                "param1": "value1",
             },
             model={"param2": "value2"},
         )
-        
+
         assert config.name == "test_dataset"
         assert config.source == "test_source"
         assert config.categories == ["cat1", "cat2"]
@@ -51,14 +46,14 @@ class TestDatasetConfig:
             },
             model={},
         )
-        
+
         assert config.name == "test"
         assert config.source == "source"
         assert config.categories == []
         assert config.preprocessing["min_interactions_per_user"] == 1
         assert config.preprocessing["min_interactions_per_item"] == 1
         assert config.model == {}
-    
+
     def test_dataset_config_missing_required_params(self):
         """Test DatasetConfig raises error when missing required preprocessing params."""
         with pytest.raises(ValueError, match="Missing required preprocessing parameter"):
@@ -73,7 +68,7 @@ class TestDatasetConfig:
 
 class ConcreteDataLoader(DataLoader):
     """Concrete implementation of DataLoader for testing."""
-    
+
     def load(self, path: Path) -> pd.DataFrame:
         """Mock load implementation."""
         return pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
@@ -81,7 +76,7 @@ class ConcreteDataLoader(DataLoader):
 
 class ConcreteDataProcessor(DataProcessor):
     """Concrete implementation of DataProcessor for testing."""
-    
+
     def process(self, data: pd.DataFrame) -> pd.DataFrame:
         """Mock process implementation."""
         return data.copy()
@@ -89,7 +84,7 @@ class ConcreteDataProcessor(DataProcessor):
 
 class ConcreteDataValidator(DataValidator):
     """Concrete implementation of DataValidator for testing."""
-    
+
     def validate(self, data: pd.DataFrame) -> tuple[bool, list[str]]:
         """Mock validate implementation."""
         if data.empty:
@@ -99,7 +94,7 @@ class ConcreteDataValidator(DataValidator):
 
 class ConcreteDataSaver(DataSaver):
     """Concrete implementation of DataSaver for testing."""
-    
+
     def save(self, data: pd.DataFrame, path: Path) -> None:
         """Mock save implementation."""
         pass
@@ -112,7 +107,7 @@ class TestDataLoader:
         """Test DataLoader can be instantiated with concrete implementation."""
         loader = ConcreteDataLoader()
         result = loader.load(Path("test.csv"))
-        
+
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 3
         assert "col1" in result.columns
@@ -142,7 +137,7 @@ class TestDataProcessor:
         processor = ConcreteDataProcessor(config)
         input_df = pd.DataFrame({"col1": [1, 2, 3]})
         result = processor.process(input_df)
-        
+
         assert isinstance(result, pd.DataFrame)
         assert result.equals(input_df)
 
@@ -158,13 +153,13 @@ class TestDataValidator:
     def test_data_validator_interface(self):
         """Test DataValidator can be instantiated with concrete implementation."""
         validator = ConcreteDataValidator()
-        
+
         # Test with valid data
         valid_df = pd.DataFrame({"col1": [1, 2, 3]})
         is_valid, errors = validator.validate(valid_df)
         assert is_valid is True
         assert errors == []
-        
+
         # Test with invalid data
         invalid_df = pd.DataFrame()
         is_valid, errors = validator.validate(invalid_df)
@@ -185,7 +180,7 @@ class TestDataSaver:
         """Test DataSaver can be instantiated with concrete implementation."""
         saver = ConcreteDataSaver()
         df = pd.DataFrame({"col1": [1, 2, 3]})
-        
+
         # Should not raise any exception
         saver.save(df, Path("test.parquet"))
 
