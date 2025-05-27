@@ -5,16 +5,12 @@ This module handles downloading, caching, and loading of Amazon Reviews data
 from HuggingFace Hub with robust error handling and data validation.
 """
 
-import hashlib
-import json
 import logging
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
-import numpy as np
 import pandas as pd
-import yaml
 from datasets import load_dataset
 from huggingface_hub import HfApi
 
@@ -108,7 +104,7 @@ class AmazonReviewsLoader(DataLoader):
         self,
         config: DatasetConfig,
         cache_dir: Path | None = None,
-        trust_remote_code: bool = True,
+        trust_remote_code: bool = False,
         logger: logging.Logger | None = None,
     ):
         self.config = config

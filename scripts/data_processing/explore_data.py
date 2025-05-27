@@ -6,14 +6,9 @@ Exploratory data analysis for Amazon Reviews 2023 dataset.
 import argparse
 import logging
 from pathlib import Path
-from typing import Dict, List
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
-import seaborn as sns
-from wordcloud import WordCloud
 
 
 def analyze_category_data(category: str, data_dir: Path) -> dict:
@@ -22,7 +17,6 @@ def analyze_category_data(category: str, data_dir: Path) -> dict:
 
     # Load data
     reviews_path = data_dir / f"{category}_reviews.parquet"
-    meta_path = data_dir / f"{category}_meta.parquet"
 
     if not reviews_path.exists():
         logger.warning(f"Reviews file not found for {category}")

@@ -9,13 +9,8 @@ with proper temporal considerations.
 import html
 import logging
 import re
-import string
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 import nltk
-import numpy as np
 import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -79,7 +74,7 @@ class TextProcessor:
                 self.stemmer = PorterStemmer()
         except Exception as e:
             # Log the error but continue without failing
-            print(f"NLTK setup error: {str(e)}. Some text processing features may be unavailable.")
+            logging.warning(f"NLTK setup error: {str(e)}. Some text processing features may be unavailable.")
 
     def clean_text(self, text: str | None | Any) -> str:
         """
