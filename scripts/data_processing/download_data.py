@@ -11,10 +11,10 @@ import logging
 import sys
 from pathlib import Path
 from typing import List, Optional
-import yaml
 
-from datasets import load_dataset
 import pandas as pd
+import yaml
+from datasets import load_dataset
 from tqdm import tqdm
 
 
@@ -32,14 +32,12 @@ def setup_logging(log_level: str = "INFO") -> None:
 
 def load_config(config_path: Path) -> dict:
     """Load configuration from YAML file."""
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         return yaml.safe_load(f)
 
 
 def download_category_data(
-    category: str, 
-    output_dir: Path,
-    sample_size: Optional[int] = None
+    category: str, output_dir: Path, sample_size: int | None = None
 ) -> None:
     """
     Download data for a specific category.
@@ -55,16 +53,12 @@ def download_category_data(
     try:
         # Download reviews
         reviews_dataset = load_dataset(
-            "McAuley-Lab/Amazon-Reviews-2023",
-            f"raw_review_{category}",
-            trust_remote_code=True
+            "McAuley-Lab/Amazon-Reviews-2023", f"raw_review_{category}", trust_remote_code=True
         )
 
         # Download metadata
         meta_dataset = load_dataset(
-            "McAuley-Lab/Amazon-Reviews-2023", 
-            f"raw_meta_{category}",
-            trust_remote_code=True
+            "McAuley-Lab/Amazon-Reviews-2023", f"raw_meta_{category}", trust_remote_code=True
         )
 
         # Convert to pandas for easier manipulation
@@ -92,36 +86,31 @@ def download_category_data(
 
 def main() -> None:
     """Main execution function."""
-    parser = argparse.ArgumentParser(
-        description="Download Amazon Reviews 2023 dataset"
-    )
+    parser = argparse.ArgumentParser(description="Download Amazon Reviews 2023 dataset")
     parser.add_argument(
         "--config",
         type=Path,
         default="configs/data_config.yaml",
-        help="Path to configuration file"
+        help="Path to configuration file",
     )
     parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default="data/raw",
-        help="Output directory for downloaded data"
+        "--output-dir", type=Path, default="data/raw", help="Output directory for downloaded data"
     )
     parser.add_argument(
         "--categories",
         nargs="+",
-        help="Specific categories to download (default: all from config)"
+        help="Specific categories to download (default: all from config)",
     )
     parser.add_argument(
         "--sample-size",
         type=int,
-        help="Sample size for testing (downloads full dataset if not specified)"
+        help="Sample size for testing (downloads full dataset if not specified)",
     )
     parser.add_argument(
         "--log-level",
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
-        help="Logging level"
+        help="Logging level",
     )
 
     args = parser.parse_args()
@@ -149,9 +138,7 @@ def main() -> None:
     for category in tqdm(categories, desc="Downloading categories"):
         try:
             download_category_data(
-                category=category,
-                output_dir=args.output_dir,
-                sample_size=args.sample_size
+                category=category, output_dir=args.output_dir, sample_size=args.sample_size
             )
         except Exception as e:
             logger.error(f"Failed to process {category}: {str(e)}")

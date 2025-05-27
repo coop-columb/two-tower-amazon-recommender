@@ -7,18 +7,18 @@ from HuggingFace Hub with robust error handling and data validation.
 
 import hashlib
 import json
+import logging
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union, TypedDict, Any, cast
-import logging
+from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union, cast
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+import yaml
 from datasets import load_dataset
 from huggingface_hub import HfApi
-import yaml
 
-from .base import DataLoader, DataValidator, DatasetConfig
+from .base import DataLoader, DatasetConfig, DataValidator
 
 
 # TypedDict for Amazon dataset statistics
@@ -26,26 +26,27 @@ class CategoryStats(TypedDict, total=False):
     total_records: int
     unique_users: int
     unique_items: int
-    avg_rating: Optional[float]
-    rating_distribution: Dict[int, int]
-    avg_text_length: Optional[float]
+    avg_rating: float | None
+    rating_distribution: dict[int, int]
+    avg_text_length: float | None
     has_error: int
-    error_message: Dict[str, str]
+    error_message: dict[str, str]
 
 
 class AmazonReviewsValidator(DataValidator):
     """Validator for Amazon Reviews dataset structure and quality."""
 
-    REQUIRED_REVIEW_COLUMNS = [
-        'user_id', 'parent_asin', 'rating', 'title', 'text', 'timestamp'
-    ]
+    REQUIRED_REVIEW_COLUMNS = ["user_id", "parent_asin", "rating", "title", "text", "timestamp"]
 
     REQUIRED_META_COLUMNS = [
-        'parent_asin', 'main_category', 'title', 'average_rating',
-        'rating_number'
+        "parent_asin",
+        "main_category",
+        "title",
+        "average_rating",
+        "rating_number",
     ]
 
-    def validate(self, data: pd.DataFrame) -> Tuple[bool, List[str]]:
+    def validate(self, data: pd.DataFrame) -> tuple[bool, list[str]]:
         """
         Validate Amazon Reviews data structure and quality.
 
@@ -58,25 +59,23 @@ class AmazonReviewsValidator(DataValidator):
         issues = []
 
         # Check required columns
-        if 'rating' in data.columns:
+        if "rating" in data.columns:
             # Reviews data validation
             missing_cols = set(self.REQUIRED_REVIEW_COLUMNS) - set(data.columns)
             if missing_cols:
                 issues.append(f"Missing review columns: {missing_cols}")
 
             # Rating range validation
-            if 'rating' in data.columns:
-                invalid_ratings = data[(data['rating'] < 1) | (data['rating'] > 5)]
+            if "rating" in data.columns:
+                invalid_ratings = data[(data["rating"] < 1) | (data["rating"] > 5)]
                 if len(invalid_ratings) > 0:
                     issues.append(
                         f"Found {len(invalid_ratings)} invalid ratings outside 1-5 range"
                     )
 
             # Text quality validation
-            if 'text' in data.columns:
-                empty_text = data[
-                    data['text'].isnull() | (data['text'].str.strip() == '')
-                ]
+            if "text" in data.columns:
+                empty_text = data[data["text"].isnull() | (data["text"].str.strip() == "")]
                 if len(empty_text) > len(data) * 0.1:  # More than 10% empty
                     issues.append(
                         f"High percentage of empty reviews: {len(empty_text)/len(data)*100:.1f}%"
@@ -86,17 +85,13 @@ class AmazonReviewsValidator(DataValidator):
             # Metadata validation
             missing_cols = set(self.REQUIRED_META_COLUMNS) - set(data.columns)
             if missing_cols:
-                issues.append(
-                    f"Missing metadata columns: {missing_cols}"
-                )
+                issues.append(f"Missing metadata columns: {missing_cols}")
 
         # Duplicate validation
-        if 'user_id' in data.columns and 'parent_asin' in data.columns:
-            duplicates = data.duplicated(['user_id', 'parent_asin'])
+        if "user_id" in data.columns and "parent_asin" in data.columns:
+            duplicates = data.duplicated(["user_id", "parent_asin"])
             if duplicates.sum() > 0:
-                issues.append(
-                    f"Found {duplicates.sum()} duplicate user-item interactions"
-                )
+                issues.append(f"Found {duplicates.sum()} duplicate user-item interactions")
 
         return len(issues) == 0, issues
 
@@ -112,9 +107,9 @@ class AmazonReviewsLoader(DataLoader):
     def __init__(
         self,
         config: DatasetConfig,
-        cache_dir: Optional[Path] = None,
+        cache_dir: Path | None = None,
         trust_remote_code: bool = True,
-        logger: Optional[logging.Logger] = None
+        logger: logging.Logger | None = None,
     ):
         self.config = config
         self.cache_dir = cache_dir or Path("data/cache")
@@ -138,11 +133,7 @@ class AmazonReviewsLoader(DataLoader):
         file_age_hours = (time.time() - cache_path.stat().st_mtime) / 3600
         return file_age_hours < max_age_hours
 
-    def _download_category_data(
-        self,
-        category: str,
-        data_type: str = "reviews"
-    ) -> pd.DataFrame:
+    def _download_category_data(self, category: str, data_type: str = "reviews") -> pd.DataFrame:
         """
         Download data for specific category from HuggingFace Hub.
 
@@ -159,9 +150,7 @@ class AmazonReviewsLoader(DataLoader):
             dataset_name = f"raw_{data_type}_{category}"
 
             dataset = load_dataset(
-                self.config.source,
-                dataset_name,
-                trust_remote_code=self.trust_remote_code
+                self.config.source, dataset_name, trust_remote_code=self.trust_remote_code
             )
 
             # Convert to pandas DataFrame
@@ -185,11 +174,7 @@ class AmazonReviewsLoader(DataLoader):
     def _save_to_cache(self, data: pd.DataFrame, cache_path: Path) -> None:
         """Save DataFrame to cache with compression."""
         try:
-            data.to_parquet(
-                cache_path,
-                compression="snappy",
-                index=False
-            )
+            data.to_parquet(cache_path, compression="snappy", index=False)
             self.logger.debug(f"Cached data to {cache_path}")
         except Exception as e:
             self.logger.warning(f"Failed to cache data: {str(e)}")
@@ -209,7 +194,7 @@ class AmazonReviewsLoader(DataLoader):
         category: str,
         data_type: str = "reviews",
         use_cache: bool = True,
-        sample_size: Optional[int] = None
+        sample_size: int | None = None,
     ) -> pd.DataFrame:
         """
         Load data for a specific category.
@@ -245,11 +230,11 @@ class AmazonReviewsLoader(DataLoader):
 
     def load_multiple_categories(
         self,
-        categories: Optional[List[str]] = None,
+        categories: list[str] | None = None,
         data_type: str = "reviews",
         use_cache: bool = True,
-        sample_size_per_category: Optional[int] = None
-    ) -> Dict[str, pd.DataFrame]:
+        sample_size_per_category: int | None = None,
+    ) -> dict[str, pd.DataFrame]:
         """
         Load data for multiple categories.
 
@@ -274,7 +259,7 @@ class AmazonReviewsLoader(DataLoader):
                     category=category,
                     data_type=data_type,
                     use_cache=use_cache,
-                    sample_size=sample_size_per_category
+                    sample_size=sample_size_per_category,
                 )
                 data_dict[category] = df
 
@@ -292,7 +277,7 @@ class AmazonReviewsLoader(DataLoader):
 
         return data_dict
 
-    def load(self, source: Union[str, Path]) -> pd.DataFrame:
+    def load(self, source: str | Path) -> pd.DataFrame:
         """
         Load data from source (implements abstract method).
 
@@ -309,7 +294,7 @@ class AmazonReviewsLoader(DataLoader):
 
         return self.load_category(category=source)
 
-    def get_available_categories(self) -> List[str]:
+    def get_available_categories(self) -> list[str]:
         """
         Get list of available categories from HuggingFace Hub.
 
@@ -333,15 +318,12 @@ class AmazonReviewsLoader(DataLoader):
             return sorted(review_configs)
 
         except Exception as e:
-            self.logger.error(
-                f"Failed to get available categories: {str(e)}"
-            )
+            self.logger.error(f"Failed to get available categories: {str(e)}")
             return self.config.categories  # Fallback to config categories
 
     def get_dataset_statistics(
-        self,
-        categories: Optional[List[str]] = None
-    ) -> Dict[str, CategoryStats]:
+        self, categories: list[str] | None = None
+    ) -> dict[str, CategoryStats]:
         """
         Get basic statistics for dataset categories.
 
@@ -362,43 +344,38 @@ class AmazonReviewsLoader(DataLoader):
 
                 category_stats = {
                     "total_records": len(df),
-                    "unique_users": (
-                        df["user_id"].nunique() if "user_id" in df.columns else 0
-                    ),
+                    "unique_users": (df["user_id"].nunique() if "user_id" in df.columns else 0),
                     "unique_items": (
-                        df["parent_asin"].nunique()
-                        if "parent_asin" in df.columns
-                        else 0
+                        df["parent_asin"].nunique() if "parent_asin" in df.columns else 0
                     ),
                     "avg_rating": df["rating"].mean() if "rating" in df.columns else None,
                     "rating_distribution": (
-                        df["rating"].value_counts().to_dict()
-                        if "rating" in df.columns
-                        else {}
+                        df["rating"].value_counts().to_dict() if "rating" in df.columns else {}
                     ),
                     "avg_text_length": (
-                        df["text"].str.len().mean()
-                        if "text" in df.columns
-                        else None
+                        df["text"].str.len().mean() if "text" in df.columns else None
                     ),
                 }
 
                 stats[category] = cast(CategoryStats, category_stats)
 
             except Exception as e:
-                self.logger.error(
-                    f"Failed to get stats for {category}: {str(e)}"
-                )
+                self.logger.error(f"Failed to get stats for {category}: {str(e)}")
                 # Create a stats entry for error case
-                stats[category] = cast(CategoryStats, {
-                    "total_records": 0,
-                    "unique_users": 0,
-                    "unique_items": 0,
-                    "avg_rating": None,
-                    "rating_distribution": {},
-                    "avg_text_length": None,
-                    "has_error": 1,  # Using 1 instead of True for type consistency
-                    "error_message": {"text": str(e)}  # Convert to dict to match expected types
-                })
+                stats[category] = cast(
+                    CategoryStats,
+                    {
+                        "total_records": 0,
+                        "unique_users": 0,
+                        "unique_items": 0,
+                        "avg_rating": None,
+                        "rating_distribution": {},
+                        "avg_text_length": None,
+                        "has_error": 1,  # Using 1 instead of True for type consistency
+                        "error_message": {
+                            "text": str(e)
+                        },  # Convert to dict to match expected types
+                    },
+                )
 
         return stats

@@ -5,29 +5,28 @@ This module defines the foundational interfaces for all data processing
 operations, ensuring consistent implementation patterns across the pipeline.
 """
 
+import logging
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
-import logging
+
 import pandas as pd
-from dataclasses import dataclass
 
 
 @dataclass
 class DatasetConfig:
     """Configuration container for dataset parameters."""
+
     name: str
     source: str
-    categories: List[str]
-    preprocessing: Dict[str, Any]
-    model: Dict[str, Any]
+    categories: list[str]
+    preprocessing: dict[str, Any]
+    model: dict[str, Any]
 
     def __post_init__(self) -> None:
         """Validate configuration after initialization."""
-        required_preprocessing_keys = [
-            "min_interactions_per_user",
-            "min_interactions_per_item"
-        ]
+        required_preprocessing_keys = ["min_interactions_per_user", "min_interactions_per_item"]
         for key in required_preprocessing_keys:
             if key not in self.preprocessing:
                 raise ValueError(f"Missing required preprocessing parameter: {key}")
@@ -36,9 +35,7 @@ class DatasetConfig:
 class DataProcessor(ABC):
     """Abstract base class for all data processing components."""
 
-    def __init__(
-        self, config: DatasetConfig, logger: Optional[logging.Logger] = None
-    ):
+    def __init__(self, config: DatasetConfig, logger: logging.Logger | None = None):
         self.config = config
         self.logger = logger or logging.getLogger(self.__class__.__name__)
 
@@ -55,7 +52,7 @@ class DataProcessor(ABC):
         """
         pass
 
-    def validate_input(self, data: pd.DataFrame, required_columns: List[str]) -> None:
+    def validate_input(self, data: pd.DataFrame, required_columns: list[str]) -> None:
         """
         Validate that input data contains required columns.
 
@@ -82,7 +79,7 @@ class DataValidator(ABC):
     """Abstract base class for data validation components."""
 
     @abstractmethod
-    def validate(self, data: pd.DataFrame) -> Tuple[bool, List[str]]:
+    def validate(self, data: pd.DataFrame) -> tuple[bool, list[str]]:
         """
         Validate data quality and return validation results.
 
@@ -99,7 +96,7 @@ class DataLoader(ABC):
     """Abstract base class for data loading components."""
 
     @abstractmethod
-    def load(self, source: Union[str, Path]) -> pd.DataFrame:
+    def load(self, source: str | Path) -> pd.DataFrame:
         """
         Load data from specified source.
 
@@ -116,7 +113,7 @@ class DataSaver(ABC):
     """Abstract base class for data saving components."""
 
     @abstractmethod
-    def save(self, data: pd.DataFrame, destination: Union[str, Path]) -> None:
+    def save(self, data: pd.DataFrame, destination: str | Path) -> None:
         """
         Save data to specified destination.
 

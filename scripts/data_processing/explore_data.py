@@ -8,15 +8,15 @@ import logging
 from pathlib import Path
 from typing import Dict, List
 
-import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-from wordcloud import WordCloud
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import seaborn as sns
+from wordcloud import WordCloud
 
 
-def analyze_category_data(category: str, data_dir: Path) -> Dict:
+def analyze_category_data(category: str, data_dir: Path) -> dict:
     """Analyze data for a specific category."""
     logger = logging.getLogger(__name__)
 
@@ -41,14 +41,13 @@ def analyze_category_data(category: str, data_dir: Path) -> Dict:
             "mean": reviews_df["text"].str.len().mean(),
             "median": reviews_df["text"].str.len().median(),
             "std": reviews_df["text"].str.len().std(),
-        }
+        },
     }
 
     return analysis
 
 
-def create_visualizations(analysis_results: List[Dict],
-                          output_dir: Path) -> None:
+def create_visualizations(analysis_results: list[dict], output_dir: Path) -> None:
     """Create comprehensive visualizations."""
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -57,10 +56,10 @@ def create_visualizations(analysis_results: List[Dict],
     num_reviews = [r["num_reviews"] for r in analysis_results]
 
     fig = px.bar(
-        x=categories, 
+        x=categories,
         y=num_reviews,
         title="Number of Reviews by Category",
-        labels={"x": "Category", "y": "Number of Reviews"}
+        labels={"x": "Category", "y": "Number of Reviews"},
     )
     fig.write_html(output_dir / "reviews_by_category.html")
 
@@ -79,27 +78,21 @@ def create_visualizations(analysis_results: List[Dict],
             axes[i].set_ylabel("Count")
 
     plt.tight_layout()
-    plt.savefig(output_dir / "rating_distributions.png",
-                dpi=300, bbox_inches="tight")
+    plt.savefig(output_dir / "rating_distributions.png", dpi=300, bbox_inches="tight")
     plt.close()
 
 
 def main() -> None:
     """Main execution function."""
-    parser = argparse.ArgumentParser(
-        description="Explore Amazon Reviews dataset"
-    )
+    parser = argparse.ArgumentParser(description="Explore Amazon Reviews dataset")
     parser.add_argument(
-        "--data-dir",
-        type=Path,
-        default="data/raw",
-        help="Directory containing downloaded data"
+        "--data-dir", type=Path, default="data/raw", help="Directory containing downloaded data"
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
         default="docs/research/data_analysis",
-        help="Output directory for analysis results"
+        help="Output directory for analysis results",
     )
 
     args = parser.parse_args()
