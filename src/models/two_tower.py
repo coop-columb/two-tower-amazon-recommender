@@ -41,7 +41,7 @@ class UserTower(keras.Model):
 
         # User ID embedding
         self.user_embedding = keras.Sequential([
-            keras.utils.StringLookup(
+            tf.keras.layers.StringLookup(
                 vocabulary=None, mask_token=None, num_oov_indices=1
             ),
             keras.layers.Embedding(
@@ -56,7 +56,7 @@ class UserTower(keras.Model):
         for feature_name in ["user_review_count_bucket", "user_avg_rating_bucket"]:
             if feature_name in vocabulary_sizes:
                 self.feature_embeddings[feature_name] = keras.Sequential([
-                    keras.utils.IntegerLookup(
+                    tf.keras.layers.IntegerLookup(
                         vocabulary=None, mask_value=0, num_oov_indices=1
                     ),
                     keras.layers.Embedding(
@@ -149,7 +149,7 @@ class ItemTower(keras.Model):
 
         # Item ID embedding
         self.item_embedding = keras.Sequential([
-            keras.utils.StringLookup(
+            tf.keras.layers.StringLookup(
                 vocabulary=None, mask_token=None, num_oov_indices=1
             ),
             keras.layers.Embedding(
@@ -162,7 +162,7 @@ class ItemTower(keras.Model):
         # Category embedding
         if "category" in vocabulary_sizes:
             self.category_embedding = keras.Sequential([
-                keras.utils.StringLookup(
+                tf.keras.layers.StringLookup(
                     vocabulary=None, mask_token=None, num_oov_indices=1
                 ),
                 keras.layers.Embedding(
@@ -179,7 +179,7 @@ class ItemTower(keras.Model):
         for feature_name in ["item_review_count_bucket", "item_avg_rating_bucket"]:
             if feature_name in vocabulary_sizes:
                 self.feature_embeddings[feature_name] = keras.Sequential([
-                    keras.utils.IntegerLookup(
+                    tf.keras.layers.IntegerLookup(
                         vocabulary=None, mask_value=0, num_oov_indices=1
                     ),
                     keras.layers.Embedding(
