@@ -120,7 +120,7 @@ class TestAmazonReviewsLoader:
         mock_load_dataset.return_value = mock_dataset
 
         loader = AmazonReviewsLoader(mock_config)
-        stats = loader.get_dataset_stats("All_Beauty")
+        stats = loader.get_dataset_statistics("All_Beauty")
 
         assert stats["category"] == "All_Beauty"
         assert stats["download_size_mb"] == 50.0
