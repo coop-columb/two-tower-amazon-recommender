@@ -46,7 +46,7 @@ def setup_logging(log_level: str = "INFO") -> None:
 
 
 def download_kcore_data(
-    category: str, max_samples: Optional[int] = None
+    category: str, max_samples: int | None = None
 ) -> tuple[pd.DataFrame, dict[str, int]]:
     """
     Download 5-core preprocessed data for a category.

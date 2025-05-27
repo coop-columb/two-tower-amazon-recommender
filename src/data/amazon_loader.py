@@ -19,6 +19,7 @@ from .base import DataLoader, DatasetConfig, DataValidator
 
 class CategoryStats(TypedDict, total=False):
     """Type definition for category statistics."""
+
     total_records: int
     unique_users: int
     unique_items: int

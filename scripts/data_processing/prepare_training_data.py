@@ -69,7 +69,7 @@ def load_category_data(data_dir: Path) -> dict[str, pd.DataFrame]:
 
 
 def combine_and_balance_data(
-    category_data: dict[str, pd.DataFrame], max_per_category: Optional[int] = None
+    category_data: dict[str, pd.DataFrame], max_per_category: int | None = None
 ) -> pd.DataFrame:
     """Combine data from multiple categories with optional balancing."""
     logger = logging.getLogger(__name__)

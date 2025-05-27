@@ -36,6 +36,18 @@ class TextProcessor:
         remove_stopwords: bool = False,
         stem_words: bool = False,
     ):
+        """Initialize text processor with configuration options.
+        
+        Args:
+            min_length: Minimum allowed text length
+            max_length: Maximum allowed text length
+            remove_html: Whether to remove HTML tags and entities
+            remove_urls: Whether to remove URLs from text
+            remove_special_chars: Whether to remove special characters
+            lowercase: Whether to convert text to lowercase
+            remove_stopwords: Whether to remove common stopwords
+            stem_words: Whether to apply word stemming
+        """
         self.min_length = min_length
         self.max_length = max_length
         self.remove_html = remove_html
@@ -147,6 +159,14 @@ class InteractionFilter:
         min_rating: float = 1.0,
         max_rating: float = 5.0,
     ):
+        """Initialize interaction filter with filtering criteria.
+        
+        Args:
+            min_user_interactions: Minimum interactions required per user
+            min_item_interactions: Minimum interactions required per item
+            min_rating: Minimum rating value to include
+            max_rating: Maximum rating value to include
+        """
         self.min_user_interactions = min_user_interactions
         self.min_item_interactions = min_item_interactions
         self.min_rating = min_rating
@@ -202,6 +222,11 @@ class FeatureEngineer:
     """Feature engineering for user-item interactions."""
 
     def __init__(self, text_processor: TextProcessor | None = None):
+        """Initialize feature engineer with optional text processor.
+        
+        Args:
+            text_processor: TextProcessor instance for text feature creation
+        """
         self.text_processor = text_processor or TextProcessor()
 
     def create_temporal_features(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -328,6 +353,12 @@ class AmazonReviewsPreprocessor(DataProcessor):
     """
 
     def __init__(self, config: DatasetConfig, logger: logging.Logger | None = None):
+        """Initialize Amazon Reviews preprocessor with configuration.
+        
+        Args:
+            config: Dataset configuration object
+            logger: Optional logger instance
+        """
         super().__init__(config, logger)
 
         # Initialize components
@@ -370,7 +401,6 @@ class AmazonReviewsPreprocessor(DataProcessor):
         self.validate_input(data, required_columns)
 
         df = data.copy()
-        initial_size = len(df)
 
         # Step 1: Basic data cleaning
         self.logger.info("Step 1: Basic data cleaning")
